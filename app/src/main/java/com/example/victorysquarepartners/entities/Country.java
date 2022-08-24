@@ -3,10 +3,10 @@ package com.example.victorysquarepartners.entities;
 import java.util.List;
 
 public class Country {
-    private List<Website> domains;
+    private List<String> domains;
     private String alphaTwoCode;
     private String country;
-    private List<Website> webPages;
+    private List<String> webPages;
     private String name;
     private String stateProvince;
 
@@ -14,7 +14,7 @@ public class Country {
 
     }
 
-    public Country(List<Website> domains, String alphaTwoCode, String country, List<Website> webPages, String name, String stateProvince){
+    public Country(List<String> domains, String alphaTwoCode, String country, List<String> webPages, String name, String stateProvince){
         this.domains = domains;
         this.alphaTwoCode = alphaTwoCode;
         this.country = country;
@@ -27,7 +27,7 @@ public class Country {
         }
     }
 
-    public List<Website> getDomains() {
+    public List<String> getDomains() {
         return domains;
     }
 
@@ -39,7 +39,7 @@ public class Country {
         return country;
     }
 
-    public List<Website> getWebPages() {
+    public List<String> getWebPages() {
         return webPages;
     }
 
