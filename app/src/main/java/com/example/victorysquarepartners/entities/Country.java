@@ -1,8 +1,9 @@
 package com.example.victorysquarepartners.entities;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Country {
+public class Country implements Serializable {
     private List<String> domains;
     private String alpha_two_code;
     private String country;
@@ -47,6 +48,17 @@ public class Country {
         return state_province;
     }
 
+    @Override
+    public String toString() {
+        return "Country{" +
+                "domains=" + domains +
+                ", alpha_two_code='" + alpha_two_code + '\'' +
+                ", country='" + country + '\'' +
+                ", web_pages=" + web_pages +
+                ", name='" + name + '\'' +
+                ", state_province='" + state_province + '\'' +
+                '}';
+    }
 }
 
 

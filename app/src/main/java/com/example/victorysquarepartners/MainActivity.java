@@ -1,12 +1,13 @@
 package com.example.victorysquarepartners;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
+
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -21,6 +22,7 @@ import com.google.gson.Gson;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -28,10 +30,13 @@ import java.util.List;
 import java.util.Set;
 
 
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String URL = "http://universities.hipolabs.com/search?country/";
 
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,53 +44,33 @@ public class MainActivity extends AppCompatActivity {
 
         ListView countryListView = findViewById(R.id.countryListView);
 
-        readData(countryReceived -> {
-            List<String> countriesForListView =  getCountryNames(countryReceived);
+        readData(receivedCountries -> {
+            List<String> countriesForListView =  getCountryNames(receivedCountries);
             ArrayAdapter<String> countryAdapter = new ArrayAdapter<>(MainActivity.this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, countriesForListView);
             countryListView.setAdapter(countryAdapter);
 
-            countryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    String selectedCountry = (String) countryListView.getAdapter().getItem(i);
-                    Country country = getSelectedCountry(countryReceived, selectedCountry);
-                    openActivity(country);
-                }
+            countryListView.setOnItemClickListener((adapterView, view, i, l) -> {
+                int index = i;
+                String selectedCountry = (String) countryListView.getAdapter().getItem(index);
+                List<Country> nameCountries = getSelectedCountries(receivedCountries, selectedCountry);
+                openActivity(nameCountries);
             });
 
         });
 
     }
 
-    private Country getSelectedCountry(List<Country> countryReceived, String selectedCountry) {
-        Country result = new Country();
-
-        for(Country country: countryReceived){
-            if(selectedCountry.equalsIgnoreCase(country.getCountry())){
-                result = country;
-                break;
-            }
-        }
-        return result;
-    }
-
-    private void openActivity(Country selectedCountry) {
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void openActivity(List<Country> receivedCountries) {
         Intent intent = new Intent(this, CountryActivity.class);
-
-        intent.putStringArrayListExtra("domains", (ArrayList<String>) selectedCountry.getDomains());
-        intent.putExtra("alpha_two_code", selectedCountry.getAlphaTwoCode());
-        intent.putExtra("country", selectedCountry.getCountry());
-        intent.putStringArrayListExtra("web_pages", (ArrayList<String>) selectedCountry.getWebPages());
-        intent.putExtra("name", selectedCountry.getName());
-        intent.putExtra("state_province", selectedCountry.getStateProvince());
-
+        intent.putExtra("selectedCountries", (Serializable) receivedCountries);
         startActivity(intent);
     }
 
-    private List<String> getCountryNames(List<Country> countryReceived) {
+    private List<String> getCountryNames(List<Country> nameCountryReceived) {
         Set<String> setResult = new HashSet<>();
 
-        for(Country country: countryReceived){
+        for(Country country: nameCountryReceived){
             setResult.add(country.getCountry());
         }
 
@@ -93,6 +78,19 @@ public class MainActivity extends AppCompatActivity {
         Collections.sort(result);
 
         return result;
+    }
+
+    private List<Country> getSelectedCountries(List<Country> countryReceived, String selectedCountry){
+        List<Country> result = new ArrayList<>();
+
+        for(Country country: countryReceived){
+            if(country.getCountry().equalsIgnoreCase(selectedCountry)){
+                result.add(country);
+            }
+        }
+
+        return result;
+
     }
 
     private void readData(IHelper helper){
