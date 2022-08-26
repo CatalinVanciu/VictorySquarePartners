@@ -4,27 +4,23 @@ import java.util.List;
 
 public class Country {
     private List<String> domains;
-    private String alphaTwoCode;
+    private String alpha_two_code;
     private String country;
-    private List<String> webPages;
+    private List<String> web_pages;
     private String name;
-    private String stateProvince;
+    private String state_province;
 
     public Country(){
 
     }
 
-    public Country(List<String> domains, String alphaTwoCode, String country, List<String> webPages, String name, String stateProvince){
+    public Country(List<String> domains, String alpha_two_code, String country, List<String> web_pages, String name, String state_province){
         this.domains = domains;
-        this.alphaTwoCode = alphaTwoCode;
+        this.alpha_two_code = alpha_two_code;
         this.country = country;
-        this.webPages = webPages;
+        this.web_pages = web_pages;
         this.name = name;
-        if(stateProvince.isEmpty()){
-            this.stateProvince = "null";
-        } else{
-            this.stateProvince = stateProvince;
-        }
+        this.state_province = state_province;
     }
 
     public List<String> getDomains() {
@@ -32,7 +28,7 @@ public class Country {
     }
 
     public String getAlphaTwoCode() {
-        return alphaTwoCode;
+        return alpha_two_code;
     }
 
     public String getCountry() {
@@ -40,7 +36,7 @@ public class Country {
     }
 
     public List<String> getWebPages() {
-        return webPages;
+        return web_pages;
     }
 
     public String getName() {
@@ -48,20 +44,9 @@ public class Country {
     }
 
     public String getStateProvince() {
-        return stateProvince;
+        return state_province;
     }
 
-    @Override
-    public String toString() {
-        return "Country{" +
-                "domains=" + domains +
-                ", alphaTwoCode='" + alphaTwoCode + '\'' +
-                ", country='" + country + '\'' +
-                ", webPages=" + webPages +
-                ", name='" + name + '\'' +
-                ", stateProvince='" + stateProvince + '\'' +
-                '}';
-    }
 }
 
 
