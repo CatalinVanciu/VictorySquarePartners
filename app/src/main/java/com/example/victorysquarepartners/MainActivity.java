@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -20,6 +21,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.victorysquarepartners.entities.Country;
 import com.example.victorysquarepartners.entities.IHelper;
+import com.example.victorysquarepartners.utils.Operations;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
@@ -28,17 +30,13 @@ import org.json.JSONException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-
 
 public class MainActivity extends AppCompatActivity {
 
     //URL: http://universities.hipolabs.com/search?country/
     private static final String URL = "http://universities.hipolabs.com/search?country/";
+    private final Operations operations = new Operations();
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -50,21 +48,20 @@ public class MainActivity extends AppCompatActivity {
         ProgressBar progressBar = findViewById(R.id.progressBar);
 
         readData(receivedCountries -> {
-            List<String> countriesForListView =  getCountryNames(receivedCountries);
+            List<String> countriesForListView =  operations.getCountryNames(receivedCountries);
             ArrayAdapter<String> countryAdapter = new ArrayAdapter<>(MainActivity.this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, countriesForListView);
             countryListView.setAdapter(countryAdapter);
             progressBar.setVisibility(View.INVISIBLE);
 
             countryListView.setOnItemClickListener((adapterView, view, i, l) -> {
                 String selectedCountry = (String) countryListView.getAdapter().getItem(i);
-                List<Country> nameCountries = getSelectedCountries(receivedCountries, selectedCountry);
+                List<Country> nameCountries = operations.getSelectedCountries(receivedCountries, selectedCountry);
                 openActivity(nameCountries);
             });
 
         });
 
     }
-
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void openActivity(List<Country> receivedCountries) {
@@ -73,40 +70,15 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private List<String> getCountryNames(List<Country> nameCountryReceived) {
-        Set<String> setResult = new HashSet<>();
-
-        for(Country country: nameCountryReceived){
-            setResult.add(country.getCountry());
-        }
-
-        List<String> result = new ArrayList<>(setResult);
-        Collections.sort(result);
-
-        return result;
-    }
-
-    private List<Country> getSelectedCountries(List<Country> countryReceived, String selectedCountry){
-        List<Country> result = new ArrayList<>();
-
-        for(Country country: countryReceived){
-            if(country.getCountry().equalsIgnoreCase(selectedCountry)){
-                result.add(country);
-            }
-        }
-
-        return result;
-
-    }
-
     private void readData(IHelper helper){
         List<Country> countries = new ArrayList<>();
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, response -> {
 
-            try {
-                JSONArray jsonArray = new JSONArray(response);
+            String resp = response.replace("state-province", "state_province");
 
+            try {
+                JSONArray jsonArray = new JSONArray(resp);
 
                 for (int i=0;i<jsonArray.length();i++){
                     Gson gson = new Gson();
@@ -140,5 +112,4 @@ public class MainActivity extends AppCompatActivity {
         requestQueue.add(stringRequest);
 
     }
-
 }
