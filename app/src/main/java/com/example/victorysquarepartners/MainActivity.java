@@ -8,8 +8,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -35,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String URL = "http://universities.hipolabs.com/search?country/";
 
-
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,15 +44,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ListView countryListView = findViewById(R.id.countryListView);
+        ProgressBar progressBar = findViewById(R.id.progressBar);
+
+
 
         readData(receivedCountries -> {
             List<String> countriesForListView =  getCountryNames(receivedCountries);
             ArrayAdapter<String> countryAdapter = new ArrayAdapter<>(MainActivity.this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, countriesForListView);
             countryListView.setAdapter(countryAdapter);
+            progressBar.setVisibility(View.INVISIBLE);
 
             countryListView.setOnItemClickListener((adapterView, view, i, l) -> {
-                int index = i;
-                String selectedCountry = (String) countryListView.getAdapter().getItem(index);
+                String selectedCountry = (String) countryListView.getAdapter().getItem(i);
                 List<Country> nameCountries = getSelectedCountries(receivedCountries, selectedCountry);
                 openActivity(nameCountries);
             });
